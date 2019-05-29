@@ -1,0 +1,87 @@
+
+def BUILD_FOLDER = 'dist'
+def REPORTS_FOLDER = "reports"
+def packageName = "ddui"
+
+pipeline {
+
+    agent {
+        docker {
+            image 'puckel/docker-airflow:1.10.2'
+            args '--entrypoint /entrypoint.sh'
+        }
+    }
+    stages {
+        stage ('Anaconda') {
+            steps {
+                sh "apt-get update -y && apt-get -y install git"
+                sh "pip install git+https://github.com/Anaconda-Server/anaconda-client && anaconda --version"
+            }
+        }
+        stage('Install') {
+            steps {
+                sh 'airflow initdb'
+                sh 'pip install -e .'
+                sh 'pip install -r ci/test_requirements.txt'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh 'ddui install'
+                sh 'pytest'
+            }
+        }
+
+        stage('Coverage') {
+            steps {
+                step([$class    : 'XUnitBuilder',
+                      thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
+                      tools     : [[$class: 'JUnitType', pattern: "${REPORTS_FOLDER}/xunit_reports.xml"]]])
+                step([$class: 'CoberturaPublisher', coberturaReportFile: "${REPORTS_FOLDER}/coverage.xml"])
+
+                junit "${REPORTS_FOLDER}/**/*.xml"
+            }
+        }
+
+        stage('Packaging') {
+            steps {
+                sh 'python setup.py bdist_wheel sdist'
+            }
+        }
+
+
+        stage('Upload dev artefact') {
+            when { not { tag pattern: "\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"} }
+            steps {
+                script {
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'anaconda-cloud',
+                                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh "anaconda login --username ${USERNAME} --password ${PASSWORD}"
+                    }
+                    if (env.BRANCH_NAME == 'master') {
+                        sh "anaconda upload --force -u octo --package ${packageName} --label dev ${BUILD_FOLDER}/*"
+                    }
+                    else {
+                        sh "anaconda upload --force -u octo --package ${packageName} --label ${env.BRANCH_NAME} ${BUILD_FOLDER}/*"
+                    }
+                }
+            }
+        }
+
+        stage('Release artefact') {
+            when { tag pattern: "\\d+\\.\\d+\\.\\d+", comparator: "REGEXP"}
+            steps {
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'pypi',
+                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh "twine upload --skip-existing -p $PASSWORD -u $USERNAME dist/*"
+                }
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'anaconda-cloud',
+                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh "anaconda login --username ${USERNAME} --password ${PASSWORD}"
+                }
+                sh "anaconda upload --force -u octo --package ${packageName} --label main ${BUILD_FOLDER}/*"
+            }
+        }
+    }
+}

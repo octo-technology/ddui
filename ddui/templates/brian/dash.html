@@ -1,0 +1,34 @@
+
+{% extends "airflow/master.html" %}
+{% import 'admin/lib.html' as lib with context %}
+{% import 'admin/static.html' as admin_static with context%}
+{% import 'admin/model/layout.html' as model_layout with context %}
+{% import 'admin/actions.html' as actionlib with context %}
+
+{% block head_css %}
+
+{{ super() }}
+
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='brian/sigle.png') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='brian/dd.css') }}">
+
+{% endblock %}
+
+{% block body %}
+
+{{ app_entry|safe }}
+{{ dash_config|safe }}
+{% endblock %}
+{% block tail %}
+<script>
+    document.getElementsByClassName("navbar navbar-inverse")[0].style['background-color'] = "#002457";
+</script>
+{{ super() }}
+{{ scripts|safe }}
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">Terms | © OCTO Technology</p>
+    </div>
+</footer>
+{% endblock %}

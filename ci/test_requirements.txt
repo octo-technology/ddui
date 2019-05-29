@@ -1,0 +1,6 @@
+pytest
+mock
+coverage
+pytest-cov
+twine
+zest.releaser

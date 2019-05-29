@@ -1,0 +1,5 @@
+include ddui/templates/brian/*
+include *.py
+include ddui/static/brian/*
+include README.md
+include LICENSE.txt

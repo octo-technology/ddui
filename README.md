@@ -1,3 +1,8 @@
+[![PyPI version](https://badge.fury.io/py/ddui.svg)](https://badge.fury.io/py/ddui)
+[![Anaconda-Server Badge](https://anaconda.org/octo/ddui/badges/latest_release_date.svg)](https://anaconda.org/octo/ddui)
+[![Anaconda-Server Badge](https://anaconda.org/octo/ddui/badges/version.svg)](https://anaconda.org/octo/ddui)
+[![Build Status](http://ec2-52-212-162-0.eu-west-1.compute.amazonaws.com:8080/buildStatus/icon?job=dd-ui-airflow%2Fmaster)](http://ec2-52-212-162-0.eu-west-1.compute.amazonaws.com:8080/job/dd-ui-airflow/job/master/)
+
 # Airflow's DataDriver plugin
 
 ## from Pandas' dataframes to Airflow pipelines
@@ -32,10 +37,14 @@ charts :
 
 ## Getting started
 
+from [PyPI.org](https://pypi.org/project/ddui/) :
+
+    pip install ddui
+    ddui install # link the plugin to airflow plugin's folder    
+
+from source install :
+
     git clone git_url_of_this_project && cd this_project
-
-local install :
-
     pip install -e .
     ddui install
     
@@ -78,3 +87,35 @@ It runs the Airflow's webserver, and it overrides the AIRFLOW__CORE__DAGS_FOLDER
     pip install -e .
     pip install -r ci/tests_requirements.txt
     ddui install
+    
+
+
+# Contributors
+
+This repository is a part of the DataDriver project.
+ 
+Since 2016, there were many people who contributed to this project : 
+
+* Ali El Moussawi
+* Arthur Baudry
+* Augustin Grimprel
+* Aurélien Massiot
+* Benjamin Joyen-Conseil
+* Constant Bridon
+* Cyril Vinot
+* Eric Biernat
+* Jeffrey Lucas
+* Nicolas Cavallo
+* Nicolas Frot
+* Matthieu Lagacherie  
+* Mehdi Houacine
+* Pierre Baonla Bassom
+* Rémy Frenoy
+* Romain Ayres
+* Samuel Rochette
+* Thomas Vial
+* Veltin Dupont 
+* Vincent Levorato
+* Yannick Drant
+* Yannick Schini
+* Yasir Khan

@@ -19,8 +19,8 @@ services:
             - LOAD_EX=n
             - EXECUTOR=Local
         volumes:
-            -  ./examples/:/usr/local/airflow/dags
-            - /home/groot/workspace/ddapi/:/usr/local/lib/python3.6/site-packages/dd/
+            - ./examples/:/usr/local/airflow/dags
+            - ./:/usr/local/lib/python3.6/site-packages/dd/
         ports:
             - "8080:8080"
         command: webserver
